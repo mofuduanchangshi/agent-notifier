@@ -81,9 +81,14 @@ export class AgentNotifierServer {
     const rawBody = await readRequestBody(request);
     const payload = parsePayload(rawBody);
     const tmux = readHeaderString(request.headers["x-agent-notifier-tmux"]);
+    const host = readHeaderString(request.headers["x-agent-notifier-host"]);
 
     if (tmux) {
       payload.agent_notifier_tmux = tmux;
+    }
+
+    if (host) {
+      payload.agent_notifier_host = host;
     }
 
     const tool = requestUrl.searchParams.get("tool") ?? readString(payload, "tool") ?? "Agent";

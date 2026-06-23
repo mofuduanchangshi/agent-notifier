@@ -10,6 +10,7 @@ set +e
 tool="\${1:-Agent}"
 payload="$(cat || true)"
 tmux_label=""
+host_label="$(hostname -s 2>/dev/null || hostname 2>/dev/null || true)"
 
 if [ -n "\${TMUX_PANE:-}" ] && command -v tmux >/dev/null 2>&1; then
   tmux_label="$(tmux display-message -p -t "\${TMUX_PANE}" '#S:#W.#P #{pane_id}' 2>/dev/null || true)"
@@ -20,6 +21,7 @@ curl -fsS -m 2 \\
   -H 'content-type: application/json' \\
   -H 'x-agent-notifier-token: ${options.token}' \\
   -H "x-agent-notifier-tmux: $tmux_label" \\
+  -H "x-agent-notifier-host: $host_label" \\
   --data-binary "$payload" \\
   "http://127.0.0.1:${options.port}/notify?tool=\${tool}" >/dev/null 2>&1 || true
 

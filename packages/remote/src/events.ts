@@ -16,9 +16,9 @@ export function formatAgentEvent(agentEvent: AgentEvent): FormattedAgentNotifica
   const payload = agentEvent.payload ?? {};
   const normalizedEvent = String(payload.hook_event_name ?? agentEvent.event);
   const notificationType = String(payload.notification_type ?? "");
-  const title = formatTitle(agentEvent.tool, normalizedEvent, notificationType);
+  const title = formatTitle(agentEvent.tool, normalizedEvent, notificationType, payload);
   const category = categorizeEvent(normalizedEvent, notificationType);
-  const body = formatBody(payload);
+  const body = formatBody(payload, formatStatus(normalizedEvent, notificationType));
 
   return {
     title,
@@ -27,24 +27,45 @@ export function formatAgentEvent(agentEvent: AgentEvent): FormattedAgentNotifica
   };
 }
 
-function formatTitle(tool: string, event: string, notificationType: string): string {
+function formatTitle(
+  tool: string,
+  event: string,
+  notificationType: string,
+  payload: Record<string, unknown>
+): string {
+  const identity = formatIdentitySuffix(payload);
+  const baseTitle = formatBaseTitle(tool, event, notificationType);
+
+  return identity ? `${baseTitle} - ${identity}` : baseTitle;
+}
+
+function formatBaseTitle(tool: string, event: string, notificationType: string): string {
   if (event === "PermissionRequest") {
-    return `${tool} needs approval`;
+    return `${tool} 需要确认`;
   }
 
   if (event === "Notification") {
     if (notificationType === "permission_prompt") {
-      return `${tool} needs approval`;
+      return `${tool} 需要确认`;
     }
 
-    return `${tool} needs attention`;
+    return `${tool} 需要处理`;
   }
 
   if (event === "Stop" || event === "SubagentStop") {
-    return `${tool} finished`;
+    return `${tool} 已完成`;
   }
 
   return `${tool} ${event}`;
+}
+
+function formatIdentitySuffix(payload: Record<string, unknown>): string | undefined {
+  const tmux = readString(payload, "agent_notifier_tmux");
+  if (tmux) {
+    return tmux.split(/\s+/)[0];
+  }
+
+  return undefined;
 }
 
 function categorizeEvent(event: string, notificationType: string): "attention" | "stop" | "other" {
@@ -59,26 +80,63 @@ function categorizeEvent(event: string, notificationType: string): "attention" |
   return "other";
 }
 
-function formatBody(payload: Record<string, unknown>): string {
+function formatStatus(event: string, notificationType: string): string {
+  if (event === "PermissionRequest" || notificationType === "permission_prompt") {
+    return "等待批准";
+  }
+
+  if (event === "Notification") {
+    if (notificationType === "idle_prompt") {
+      return "等待输入";
+    }
+
+    if (notificationType === "elicitation_dialog") {
+      return "等待确认";
+    }
+
+    return "需要处理";
+  }
+
+  if (event === "Stop") {
+    return "本轮已完成";
+  }
+
+  if (event === "SubagentStop") {
+    return "子任务已完成";
+  }
+
+  return "收到事件";
+}
+
+function formatBody(payload: Record<string, unknown>, status: string): string {
   const lines: string[] = [];
   const cwd = readString(payload, "cwd");
   const session = readString(payload, "session_id") ?? readString(payload, "thread_id");
   const tmux = readString(payload, "agent_notifier_tmux");
+  const host = readString(payload, "agent_notifier_host");
   const message = readString(payload, "message") ?? readNestedString(payload, ["tool_input", "description"]);
   const toolName = readString(payload, "tool_name");
 
-  if (cwd) {
-    lines.push(`cwd: ${cwd}`);
+  if (tmux) {
+    lines.push(`终端: ${tmux}`);
   }
 
-  if (tmux) {
-    lines.push(`tmux: ${tmux}`);
-  } else if (session) {
-    lines.push(`session: ${session}`);
+  if (!tmux && host) {
+    lines.push(`主机: ${host}`);
+  }
+
+  if (!tmux && cwd) {
+    lines.push(`目录: ${cwd}`);
+  }
+
+  lines.push(`状态: ${status}`);
+
+  if (!tmux && session) {
+    lines.push(`会话: ${session}`);
   }
 
   if (toolName) {
-    lines.push(`tool: ${toolName}`);
+    lines.push(`工具: ${toolName}`);
   }
 
   if (message) {
@@ -86,7 +144,7 @@ function formatBody(payload: Record<string, unknown>): string {
     lines.push(limitText(message, 700));
   }
 
-  return lines.length > 0 ? lines.join("\n") : "Agent event received.";
+  return lines.length > 0 ? lines.join("\n") : "收到 Agent 事件。";
 }
 
 function readString(payload: Record<string, unknown>, key: string): string | undefined {

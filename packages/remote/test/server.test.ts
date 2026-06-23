@@ -23,7 +23,8 @@ test("receives authorized hook events and rejects invalid tokens", async () => {
       headers: {
         "content-type": "application/json",
         "x-agent-notifier-token": "secret",
-        "x-agent-notifier-tmux": "work:api.2 %7"
+        "x-agent-notifier-tmux": "work:api.2 %7",
+        "x-agent-notifier-host": "devbox"
       },
       body: JSON.stringify({
         hook_event_name: "Stop"
@@ -37,7 +38,8 @@ test("receives authorized hook events and rejects invalid tokens", async () => {
         event: "Stop",
         payload: {
           hook_event_name: "Stop",
-          agent_notifier_tmux: "work:api.2 %7"
+          agent_notifier_tmux: "work:api.2 %7",
+          agent_notifier_host: "devbox"
         }
       }
     ]);

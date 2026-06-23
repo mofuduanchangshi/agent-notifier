@@ -2,7 +2,7 @@
   "name": "agent-notifier",
   "displayName": "Agent Notifier",
   "description": "Forward Codex and Claude Code hook events from Remote SSH hosts to VS Code notifications on your Mac.",
-  "version": "0.2.0",
+  "version": "0.3.2",
   "publisher": "local",
   "license": "MIT",
   "engines": {
@@ -65,7 +65,7 @@
   "scripts": {
     "compile": "tsc -p .",
     "test": "npm run compile && node --test out/test/*.test.js",
-    "package": "vsce package --allow-missing-repository --out ../../outputs/agent-notifier-remote-0.2.0.vsix"
+    "package": "vsce package --allow-missing-repository --out ../../outputs/agent-notifier-remote-0.3.2.vsix"
   },
   "devDependencies": {
     "@types/node": "^22.10.1",

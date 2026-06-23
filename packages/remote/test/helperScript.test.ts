@@ -12,6 +12,8 @@ test("creates a hook helper script that posts stdin to the loopback receiver", (
   assert.match(script, /43123/);
   assert.match(script, /secret-token/);
   assert.match(script, /x-agent-notifier-token/);
+  assert.match(script, /hostname -s/);
+  assert.match(script, /x-agent-notifier-host/);
   assert.match(script, /payload="\$\(cat \|\| true\)"/);
   assert.match(script, /TMUX_PANE/);
   assert.match(script, /tmux display-message/);

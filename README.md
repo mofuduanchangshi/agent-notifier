@@ -1,5 +1,7 @@
 # Agent Notifier
 
+[中文说明](README.zh-CN.md)
+
 VS Code Remote SSH notifications for Codex and Claude Code.
 
 This repository contains two VS Code extensions:
@@ -12,7 +14,7 @@ Prebuilt VSIX files are in `vsix/`.
 ## Install
 
 1. Install `vsix/agent-notifier-mac-0.2.1.vsix` locally on the Mac.
-2. Install `vsix/agent-notifier-remote-0.2.0.vsix` in the Remote SSH VS Code window.
+2. Install `vsix/agent-notifier-remote-0.3.2.vsix` in the Remote SSH VS Code window.
 3. Reload VS Code.
 4. In the Remote SSH window, run `Agent Notifier: Install Hooks`.
 5. Restart Codex and Claude Code sessions.
@@ -46,4 +48,3 @@ npm install
 npm test
 npm run package
 ```
-

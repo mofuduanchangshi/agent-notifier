@@ -1,0 +1,58 @@
+{
+  "name": "agent-notifier-mac",
+  "displayName": "Agent Notifier Mac Companion",
+  "description": "Local macOS companion for Agent Notifier Remote.",
+  "version": "0.2.1",
+  "publisher": "local",
+  "license": "MIT",
+  "engines": {
+    "vscode": "^1.94.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "extensionKind": [
+    "ui"
+  ],
+  "activationEvents": [
+    "onCommand:agentNotifierMac.notify"
+  ],
+  "main": "./out/src/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "agentNotifierMac.notify",
+        "title": "Agent Notifier Mac: Native Notify"
+      }
+    ],
+    "configuration": {
+      "title": "Agent Notifier Mac",
+      "properties": {
+        "agentNotifierMac.deliveryMode": {
+          "type": "string",
+          "default": "notification",
+          "enum": [
+            "notification",
+            "stickyAlert"
+          ],
+          "enumDescriptions": [
+            "Use macOS Notification Center banners. Duration is controlled by macOS notification settings.",
+            "Use a modal macOS alert that stays until OK is clicked."
+          ],
+          "description": "How the Mac companion displays native notifications."
+        }
+      }
+    }
+  },
+  "scripts": {
+    "compile": "tsc -p .",
+    "test": "npm run compile && node --test out/test/*.test.js",
+    "package": "vsce package --allow-missing-repository --out ../../outputs/agent-notifier-mac-0.2.1.vsix"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.1",
+    "@types/vscode": "^1.94.0",
+    "@vscode/vsce": "^3.2.2",
+    "typescript": "^5.7.2"
+  }
+}

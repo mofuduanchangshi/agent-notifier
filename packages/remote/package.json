@@ -1,0 +1,76 @@
+{
+  "name": "agent-notifier",
+  "displayName": "Agent Notifier",
+  "description": "Forward Codex and Claude Code hook events from Remote SSH hosts to VS Code notifications on your Mac.",
+  "version": "0.2.0",
+  "publisher": "local",
+  "license": "MIT",
+  "engines": {
+    "vscode": "^1.94.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "extensionKind": [
+    "workspace"
+  ],
+  "activationEvents": [
+    "onStartupFinished",
+    "onCommand:agentNotifier.startServer",
+    "onCommand:agentNotifier.testNotification",
+    "onCommand:agentNotifier.installHooks",
+    "onCommand:agentNotifier.showSetup"
+  ],
+  "main": "./out/src/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "agentNotifier.startServer",
+        "title": "Agent Notifier: Start Server"
+      },
+      {
+        "command": "agentNotifier.testNotification",
+        "title": "Agent Notifier: Test Notification"
+      },
+      {
+        "command": "agentNotifier.installHooks",
+        "title": "Agent Notifier: Install Hooks"
+      },
+      {
+        "command": "agentNotifier.showSetup",
+        "title": "Agent Notifier: Show Setup"
+      }
+    ],
+    "configuration": {
+      "title": "Agent Notifier",
+      "properties": {
+        "agentNotifier.notifyOnStop": {
+          "type": "boolean",
+          "default": true,
+          "description": "Show notifications when Codex or Claude Code completes a turn or response."
+        },
+        "agentNotifier.notifyOnAttention": {
+          "type": "boolean",
+          "default": true,
+          "description": "Show notifications when Codex or Claude Code needs user attention."
+        },
+        "agentNotifier.preferMacNativeNotifications": {
+          "type": "boolean",
+          "default": true,
+          "description": "Prefer the local Agent Notifier Mac Companion native notification command when it is installed."
+        }
+      }
+    }
+  },
+  "scripts": {
+    "compile": "tsc -p .",
+    "test": "npm run compile && node --test out/test/*.test.js",
+    "package": "vsce package --allow-missing-repository --out ../../outputs/agent-notifier-remote-0.2.0.vsix"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.1",
+    "@types/vscode": "^1.94.0",
+    "@vscode/vsce": "^3.2.2",
+    "typescript": "^5.7.2"
+  }
+}

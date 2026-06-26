@@ -62,7 +62,7 @@ function formatBaseTitle(tool: string, event: string, notificationType: string):
 function formatIdentitySuffix(payload: Record<string, unknown>): string | undefined {
   const tmux = readString(payload, "agent_notifier_tmux");
   if (tmux) {
-    return tmux.split(/\s+/)[0];
+    return formatTmuxSessionName(tmux);
   }
 
   return undefined;
@@ -116,9 +116,10 @@ function formatBody(payload: Record<string, unknown>, status: string): string {
   const host = readString(payload, "agent_notifier_host");
   const message = readString(payload, "message") ?? readNestedString(payload, ["tool_input", "description"]);
   const toolName = readString(payload, "tool_name");
+  const tmuxSessionName = tmux ? formatTmuxSessionName(tmux) : undefined;
 
   if (tmux) {
-    lines.push(`终端: ${tmux}`);
+    lines.push(`终端: ${tmuxSessionName ?? tmux}`);
   }
 
   if (!tmux && host) {
@@ -150,6 +151,12 @@ function formatBody(payload: Record<string, unknown>, status: string): string {
 function readString(payload: Record<string, unknown>, key: string): string | undefined {
   const value = payload[key];
   return typeof value === "string" && value.length > 0 ? value : undefined;
+}
+
+function formatTmuxSessionName(tmuxLabel: string): string | undefined {
+  const compactIdentity = tmuxLabel.split(/\s+/)[0];
+  const sessionName = compactIdentity.split(":")[0];
+  return sessionName || compactIdentity || undefined;
 }
 
 function readNestedString(payload: Record<string, unknown>, path: string[]): string | undefined {

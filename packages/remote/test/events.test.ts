@@ -18,20 +18,22 @@ test("formats a Codex permission request as an approval notification", () => {
   assert.match(notification.body, /状态: 等待批准/);
 });
 
-test("uses compact tmux identity in the title and hides agent session ids", () => {
+test("uses only the tmux session name in the title and body", () => {
   const notification = formatAgentEvent({
     tool: "Codex",
     event: "Stop",
     payload: {
       cwd: "/data",
       session_id: "019eaf4c-c06b-70e2-9795-282dd5378e7f",
-      agent_notifier_tmux: "work:api.2 %7",
+      agent_notifier_tmux: "work:api.2 %54",
       agent_notifier_host: "devbox"
     }
   });
 
-  assert.equal(notification.title, "Codex 已完成 - work:api.2");
-  assert.match(notification.body, /终端: work:api\.2 %7/);
+  assert.equal(notification.title, "Codex 已完成 - work");
+  assert.match(notification.body, /终端: work/);
+  assert.doesNotMatch(notification.body, /api\.2/);
+  assert.doesNotMatch(notification.body, /%54/);
   assert.doesNotMatch(notification.body, /主机:/);
   assert.doesNotMatch(notification.body, /目录:/);
   assert.match(notification.body, /状态: 本轮已完成/);
@@ -50,7 +52,7 @@ test("describes Claude idle notifications as waiting for input", () => {
     }
   });
 
-  assert.equal(notification.title, "Claude 需要处理 - agents:claude.1");
+  assert.equal(notification.title, "Claude 需要处理 - agents");
   assert.match(notification.body, /状态: 等待输入/);
   assert.match(notification.body, /Claude is waiting/);
 });

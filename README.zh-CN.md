@@ -17,7 +17,7 @@ Agent Notifier 是一组 VS Code 扩展，用来把 SSH 远端服务器里的 Co
 
 已经打好的 VSIX 文件在 `vsix/` 目录：
 
-- `vsix/agent-notifier-remote-0.3.2.vsix`
+- `vsix/agent-notifier-remote-0.3.3.vsix`
 - `vsix/agent-notifier-mac-0.2.1.vsix`
 
 ## 安装
@@ -33,7 +33,7 @@ Agent Notifier 是一组 VS Code 扩展，用来把 SSH 远端服务器里的 Co
 2. 在 Remote SSH 的 VS Code 窗口里安装：
 
    ```text
-   vsix/agent-notifier-remote-0.3.2.vsix
+   vsix/agent-notifier-remote-0.3.3.vsix
    ```
 
    安装目标应为 SSH 远端。
@@ -66,23 +66,23 @@ Agent Notifier 是一组 VS Code 扩展，用来把 SSH 远端服务器里的 Co
 
 ## 通知格式
 
-在 tmux 中运行时，通知会优先显示 tmux 标识，而不是 Codex / Claude 的长 session id。
+在 tmux 中运行时，通知会优先显示 tmux session 名，而不是 Codex / Claude 的长 session id、window/pane 名或 pane id。
 
 示例：
 
 ```text
-Codex 已完成 - work:api.2
+Codex 已完成 - work
 
-终端: work:api.2 %7
+终端: work
 状态: 本轮已完成
 ```
 
 需要你处理时：
 
 ```text
-Claude 需要处理 - agents:claude.1
+Claude 需要处理 - agents
 
-终端: agents:claude.1 %3
+终端: agents
 状态: 等待输入
 ```
 
@@ -161,4 +161,3 @@ npm run package
 - 这个项目不依赖外部推送服务。
 - VS Code 关闭或 Remote SSH 断开后，远端 hook receiver 不会继续运行。
 - 需要离线/断连后也能提醒时，应接入 ntfy、Bark、Pushover、Telegram 等外部推送通道。
-

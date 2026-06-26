@@ -35,10 +35,10 @@ Codex may require you to trust the newly installed hook. Open `/hooks` in Codex 
 
 The extension deliberately sends only compact notification metadata to VS Code: tool, event, working directory, session id, tool name, and short message text.
 
-When hooks run inside tmux, the helper adds a tmux label such as `work:api.2 %7`. Notification titles use Chinese text and the compact identity, for example `Codex 已完成 - work:api.2`, and the body shows:
+When hooks run inside tmux, the helper captures raw tmux metadata, but notifications show only the tmux session name. For example, the title can be `Codex 已完成 - work`, and the body shows:
 
 ```text
-终端: work:api.2 %7
+终端: work
 状态: 本轮已完成
 ```
 
